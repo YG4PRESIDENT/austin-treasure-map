@@ -2,7 +2,7 @@
 // Austin Treasure Map — Service Worker
 // ============================================================
 
-const CACHE_NAME = 'atm-v6';
+const CACHE_NAME = 'atm-v7';
 
 const PRECACHE = [
   './',

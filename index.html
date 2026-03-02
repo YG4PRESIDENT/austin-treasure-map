@@ -9,9 +9,6 @@
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- MarkerCluster CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <!-- Locate Control CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
   <!-- Fullscreen CSS -->
@@ -73,18 +70,6 @@
         <!-- Quest Card -->
         <div id="quest-container" class="nav-sidebar__quest"></div>
 
-        <!-- Map Style Picker (desktop) -->
-        <div class="style-picker">
-          <div class="style-picker__label">Map Style</div>
-          <div class="style-picker__grid">
-            <button class="style-picker__btn" data-layer="🗺️ Treasure Map">🗺️ Map</button>
-            <button class="style-picker__btn" data-layer="⛰️ Explorer Map">⛰️ Topo</button>
-            <button class="style-picker__btn" data-layer="🏙️ City Map">🏙️ City</button>
-            <button class="style-picker__btn" data-layer="🌙 Dark Mode">🌙 Dark</button>
-            <button class="style-picker__btn" data-layer="🛰️ Satellite">🛰️ Sat</button>
-          </div>
-        </div>
-
         <!-- Footer Actions -->
         <div class="nav-sidebar__footer">
           <button class="nav-btn" id="share-btn">📤 Share</button>
@@ -98,6 +83,15 @@
     <!-- ─── Map Area ─── -->
     <main id="map-area">
       <div id="map"></div>
+
+      <!-- Map Style Picker (floating on map, desktop only) -->
+      <div class="style-picker style-picker--floating">
+        <button class="style-picker__btn" data-layer="🗺️ Treasure Map">🗺️ Map</button>
+        <button class="style-picker__btn" data-layer="⛰️ Explorer Map">⛰️ Topo</button>
+        <button class="style-picker__btn" data-layer="🏙️ City Map">🏙️ City</button>
+        <button class="style-picker__btn" data-layer="🌙 Dark Mode">🌙 Dark</button>
+        <button class="style-picker__btn" data-layer="🛰️ Satellite">🛰️ Sat</button>
+      </div>
 
       <!-- Mobile category chips (visible only on mobile Map tab) -->
       <div id="mobile-filter-chips" class="mobile-filter-chips"></div>
@@ -182,8 +176,6 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- MarkerCluster -->
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <!-- Locate Control -->
   <script src="https://unpkg.com/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js"></script>
   <!-- Fullscreen -->

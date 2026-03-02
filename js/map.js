@@ -177,20 +177,8 @@ export function initMap() {
     console.warn('Fullscreen control unavailable:', e);
   }
 
-  // Marker cluster group
-  markersLayer = L.markerClusterGroup({
-    maxClusterRadius: 50,
-    spiderfyOnMaxZoom: true,
-    showCoverageOnHover: false,
-    iconCreateFunction: (cluster) => {
-      const count = cluster.getChildCount();
-      return L.divIcon({
-        html: `<div class="cluster-icon">${count}</div>`,
-        className: 'custom-cluster',
-        iconSize: [44, 44],
-      });
-    },
-  });
+  // Feature group for all markers (no clustering — show every pin individually)
+  markersLayer = L.featureGroup();
   map.addLayer(markersLayer);
 
   return map;

@@ -825,6 +825,21 @@ body.dark-mode .mastery-item__name {
   gap: 6px;
 }
 
+/* Floating picker on map (desktop) */
+.style-picker--floating {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 400;
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0;
+}
+
+.style-picker--floating .style-picker__btn {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
 .style-picker__btn {
   font-family: var(--font-ui);
   font-size: 0.7rem;
@@ -894,6 +909,11 @@ body.dark-mode .style-picker--mobile {
 
   /* Hide nav sidebar on mobile */
   #nav-sidebar {
+    display: none;
+  }
+
+  /* Hide floating style picker on mobile (lives in Profile tab instead) */
+  .style-picker--floating {
     display: none;
   }
 
