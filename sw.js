@@ -2,7 +2,7 @@
 // Austin Treasure Map — Service Worker
 // ============================================================
 
-const CACHE_NAME = 'atm-v2';
+const CACHE_NAME = 'atm-v3';
 
 const PRECACHE = [
   './',
@@ -48,7 +48,8 @@ self.addEventListener('fetch', (e) => {
     url.hostname.includes('tile') ||
     url.hostname.includes('basemaps') ||
     url.hostname.includes('arcgisonline') ||
-    url.hostname.includes('stadiamaps')
+    url.hostname.includes('cooperhewitt') ||
+    url.hostname.includes('opentopomap')
   ) {
     e.respondWith(
       fetch(e.request)

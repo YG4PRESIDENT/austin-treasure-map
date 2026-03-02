@@ -11,34 +11,51 @@ let markerMap = {};  // placeId → L.marker
 
 const AUSTIN_CENTER = [30.2672, -97.7431];
 const DEFAULT_ZOOM = 12;
-// Wide enough to include day trips (Enchanted Rock, New Braunfels, etc.)
-const MAX_BOUNDS = L.latLngBounds([29.50, -99.10], [30.75, -97.20]);
 
 // --- Tile Layers ---
+// All providers below are free and require NO API key
 function createBaseLayers() {
+  // Esri NatGeo — vintage hand-drawn cartographic style, perfect treasure map feel
   const watercolor = L.tileLayer(
-    'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-    { attribution: '&copy; Stadia Maps &copy; Stamen Design', maxZoom: 18 }
+    'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: '&copy; Esri / National Geographic',
+      maxZoom: 16,
+    }
   );
 
   const terrain = L.tileLayer(
-    'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.png',
-    { attribution: '&copy; Stadia Maps &copy; Stamen Design', maxZoom: 18 }
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; OpenTopoMap &copy; OpenStreetMap',
+      maxZoom: 17,
+    }
   );
 
   const voyager = L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20, subdomains: 'abcd' }
+    {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 20,
+      subdomains: 'abcd',
+    }
   );
 
   const darkMatter = L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20, subdomains: 'abcd' }
+    {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 20,
+      subdomains: 'abcd',
+    }
   );
 
   const satellite = L.tileLayer(
     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    { attribution: '&copy; Esri', maxZoom: 19 }
+    {
+      attribution: '&copy; Esri',
+      maxZoom: 19,
+    }
   );
 
   return {
@@ -52,8 +69,13 @@ function createBaseLayers() {
 
 function createOverlays() {
   const labels = L.tileLayer(
-    'https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}.png',
-    { attribution: '&copy; Stadia Maps', maxZoom: 18, opacity: 0.4 }
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png',
+    {
+      attribution: '&copy; CARTO',
+      maxZoom: 20,
+      subdomains: 'abcd',
+      opacity: 0.5,
+    }
   );
   return { '🏷️ Street Labels': labels };
 }
@@ -90,15 +112,18 @@ export function initMap() {
   const baseLayers = createBaseLayers();
   const overlays = createOverlays();
 
-  // Restore saved style or default to Treasure Map
-  const savedStyle = getPreference('mapStyle', '🗺️ Treasure Map');
-  const defaultLayer = baseLayers[savedStyle] || baseLayers['🗺️ Treasure Map'];
+  // Restore saved style or default to City Map (most reliable)
+  const savedStyle = getPreference('mapStyle', '🏙️ City Map');
+  const defaultLayer = baseLayers[savedStyle] || baseLayers['🏙️ City Map'];
+
+  // Build maxBounds here (inside function, not at top-level)
+  const maxBounds = L.latLngBounds([29.50, -99.10], [30.75, -97.20]);
 
   map = L.map('map', {
     center: AUSTIN_CENTER,
     zoom: DEFAULT_ZOOM,
     layers: [defaultLayer],
-    maxBounds: MAX_BOUNDS,
+    maxBounds: maxBounds,
     maxBoundsViscosity: 0.8,
     zoomControl: false,
   });
@@ -127,17 +152,25 @@ export function initMap() {
     document.body.classList.add('sepia-mode');
   }
 
-  // Locate control (GPS)
-  L.control.locate({
-    position: 'topright',
-    strings: { title: 'Locate Me' },
-    flyTo: true,
-    keepCurrentZoomLevel: true,
-    locateOptions: { maxZoom: 15 },
-  }).addTo(map);
+  // Locate control (GPS) — wrapped in try/catch in case plugin fails
+  try {
+    L.control.locate({
+      position: 'topright',
+      strings: { title: 'Locate Me' },
+      flyTo: true,
+      keepCurrentZoomLevel: true,
+      locateOptions: { maxZoom: 15 },
+    }).addTo(map);
+  } catch (e) {
+    console.warn('Locate control unavailable:', e);
+  }
 
   // Fullscreen control
-  map.addControl(new L.Control.Fullscreen({ position: 'topright' }));
+  try {
+    map.addControl(new L.Control.Fullscreen({ position: 'topright' }));
+  } catch (e) {
+    console.warn('Fullscreen control unavailable:', e);
+  }
 
   // Marker cluster group
   markersLayer = L.markerClusterGroup({
@@ -160,7 +193,7 @@ export function initMap() {
 
 export function addMarkers(onMarkerClick) {
   PLACES.forEach((place) => {
-    if (!place.lat || !place.lng) return; // skip places without coordinates
+    if (!place.lat || !place.lng) return;
 
     const marker = L.marker([place.lat, place.lng], {
       icon: createMarkerIcon(place),
