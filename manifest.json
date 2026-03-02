@@ -1,7 +1,7 @@
 {
   "name": "Austin Treasure Map",
   "short_name": "ATX Map",
-  "description": "Yahir's curated Austin treasure map — 90+ hidden gems, food spots, nature, nightlife, and quirky finds.",
+  "description": "Yahir's curated Austin treasure map — 85+ hidden gems, food spots, nature, nightlife, and quirky finds.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#2c1810",

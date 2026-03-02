@@ -4,7 +4,7 @@
 
 import { initMap, addMarkers } from './map.js';
 import { initSidebar, openSidebar, updateProgressBar } from './sidebar.js';
-import { initNeighborhoods, getNeighborhoodLayer } from './neighborhoods.js';
+import { initNeighborhoods } from './neighborhoods.js';
 import { initFilters, renderListView } from './filters.js';
 import { isShareMode, initShareMode, initShareButton } from './share.js';
 import { exportData, importData } from './state.js';
