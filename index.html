@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#c4883c">
+  <meta name="description" content="Yahir's curated Austin treasure map — 90+ hidden gems, food spots, nature, nightlife, and quirky finds.">
+  <title>Austin Treasure Map</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <!-- Locate Control CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
+  <!-- Fullscreen CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.css" />
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading">
+    <div class="loading-compass"></div>
+    <div class="loading-text">Charting treasures…</div>
+  </div>
+
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <h1 id="app-title">YAHIR'S AUSTIN TREASURE MAP</h1>
+      <div class="header-right">
+        <div id="progress-bar">
+          <span id="progress-count">0 / 0</span>
+          <div class="progress-track">
+            <div id="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <button class="header-btn" id="share-btn">📤 Share</button>
+        <button class="header-btn" id="export-btn">💾 Export</button>
+        <button class="header-btn" id="import-btn">📂 Import</button>
+      </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar-wrapper">
+      <div class="filter-bar-controls">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search treasures…" autocomplete="off">
+        </div>
+        <select id="neighborhood-select">
+          <option value="">Zoom to neighborhood…</option>
+        </select>
+        <button id="list-view-toggle">📋 List View</button>
+        <select id="sort-select">
+          <option value="alpha">A → Z</option>
+          <option value="category">By Category</option>
+          <option value="neighborhood">By Neighborhood</option>
+          <option value="visited">Visited First</option>
+          <option value="unvisited">Unvisited First</option>
+        </select>
+      </div>
+      <div id="filter-bar"></div>
+    </div>
+
+    <!-- Map + Sidebar Area -->
+    <div class="map-area">
+      <div id="map"></div>
+      <div id="list-view">
+        <div id="list-view-content"></div>
+      </div>
+
+      <!-- Sidebar Detail Panel -->
+      <aside id="sidebar" aria-hidden="true">
+        <button id="sidebar-close">✕</button>
+        <div class="sidebar-content">
+          <h2 id="sidebar-name"></h2>
+          <div class="sidebar-tags">
+            <span id="sidebar-category"></span>
+            <span id="sidebar-neighborhood"></span>
+            <span id="sidebar-daytrip"></span>
+          </div>
+          <p id="sidebar-description"></p>
+          <p id="sidebar-source"></p>
+          <a id="sidebar-address" href="#" target="_blank" rel="noopener"></a>
+          <button id="sidebar-visited-btn">☐ Mark as Discovered</button>
+          <div id="sidebar-notes-section">
+            <label class="notes-label" for="sidebar-notes">Personal Notes</label>
+            <textarea id="sidebar-notes" placeholder="Your thoughts, tips, review…"></textarea>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- MarkerCluster -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Locate Control -->
+  <script src="https://unpkg.com/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js"></script>
+  <!-- Fullscreen -->
+  <script src="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.js"></script>
+
+  <!-- App JS (ES Modules) -->
+  <script type="module" src="js/app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+/* ============================================================
+   Austin Treasure Map — Map & Marker Styles
+   ============================================================ */
+
+/* --- Custom Markers --- */
+.custom-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.marker-pin {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.marker-emoji {
+  transform: rotate(45deg);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.marker-check {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  transform: rotate(45deg);
+  background: var(--gold);
+  color: white;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Discovered (visited) */
+.marker-discovered .marker-pin {
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.3),
+    0 0 12px rgba(196,136,60,0.5),
+    0 0 24px rgba(196,136,60,0.2);
+}
+
+/* Undiscovered */
+.marker-undiscovered .marker-pin {
+  opacity: 0.75;
+  filter: saturate(0.7);
+}
+
+/* Hover */
+.custom-marker:hover .marker-pin {
+  transform: rotate(-45deg) scale(1.2);
+  opacity: 1;
+  filter: saturate(1);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.3),
+    0 0 16px rgba(196,136,60,0.4);
+}
+
+/* Day trip badge */
+.day-trip-badge {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold-dark);
+  color: white;
+  font-family: var(--font-ui);
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* --- Cluster Icons --- */
+.custom-cluster {
+  background: none !important;
+}
+
+.cluster-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: white;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(196,136,60,0.4), 0 0 0 3px rgba(255,255,255,0.3);
+  transition: transform 0.2s;
+}
+
+.custom-cluster:hover .cluster-icon {
+  transform: scale(1.1);
+}
+
+/* --- Tooltips --- */
+.treasure-tooltip {
+  font-family: var(--font-body) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  background: var(--cream) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--gold) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+}
+
+.treasure-tooltip::before {
+  border-top-color: var(--gold) !important;
+}
+
+/* --- Neighborhood Overlay --- */
+.neighborhood-polygon {
+  transition: fill-opacity 0.2s;
+}
+
+.neighborhood-label {
+  pointer-events: none !important;
+}
+
+.neighborhood-label span {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold-dark);
+  text-shadow:
+    1px 1px 0 var(--parchment),
+    -1px 1px 0 var(--parchment),
+    1px -1px 0 var(--parchment),
+    -1px -1px 0 var(--parchment),
+    0 0 6px rgba(244,232,209,0.8);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.neighborhood-tooltip {
+  font-family: var(--font-body) !important;
+  font-size: 0.82rem !important;
+  background: var(--cream) !important;
+  border: 1px solid var(--gold) !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+}
+
+/* --- Leaflet Control Overrides --- */
+.leaflet-control-layers {
+  border: 1px solid var(--gold) !important;
+  border-radius: 8px !important;
+  background: var(--cream) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-control-layers-list {
+  font-family: var(--font-ui) !important;
+  font-size: 0.8rem !important;
+}
+
+.leaflet-control-zoom a,
+.leaflet-control-locate a,
+.leaflet-control-fullscreen a {
+  background: var(--cream) !important;
+  color: var(--brown-dark) !important;
+  border: 1px solid var(--gold) !important;
+  font-size: 1rem !important;
+}
+
+.leaflet-control-zoom a:hover,
+.leaflet-control-locate a:hover,
+.leaflet-control-fullscreen a:hover {
+  background: var(--parchment) !important;
+}
+
+/* Locate control pulse */
+.leaflet-control-locate .leaflet-control-locate-location-arrow {
+  color: var(--gold);
+}
+
+/* --- Leaflet Popup Override --- */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+  font-family: var(--font-body) !important;
+}
+
+/* --- Dark Mode Map Overrides --- */
+body.dark-mode .leaflet-control-layers,
+body.dark-mode .leaflet-control-zoom a,
+body.dark-mode .leaflet-control-locate a,
+body.dark-mode .leaflet-control-fullscreen a {
+  background: #222 !important;
+  color: #ddd !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .treasure-tooltip,
+body.dark-mode .neighborhood-tooltip {
+  background: #222 !important;
+  color: #ddd !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .neighborhood-label span {
+  color: var(--gold-light);
+  text-shadow:
+    1px 1px 0 #111,
+    -1px 1px 0 #111,
+    1px -1px 0 #111,
+    -1px -1px 0 #111;
+}
+
+body.dark-mode .cluster-icon {
+  box-shadow: 0 2px 10px rgba(196,136,60,0.6), 0 0 0 3px rgba(255,255,255,0.1);
+}
