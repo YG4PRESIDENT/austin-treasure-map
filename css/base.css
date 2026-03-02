@@ -140,6 +140,21 @@ html, body {
   50% { transform: scaleY(1.5); }
 }
 
+/* Milestone progress bar glow at 25/50/75% */
+#progress-bar[data-milestone="25"] .progress-track,
+#progress-bar[data-milestone="50"] .progress-track,
+#progress-bar[data-milestone="75"] .progress-track {
+  box-shadow: 0 0 6px rgba(196,136,60,0.4);
+}
+
+#progress-bar[data-milestone="100"] .progress-track {
+  box-shadow: 0 0 12px rgba(196,136,60,0.6);
+}
+
+#progress-bar[data-milestone="100"] #progress-fill {
+  background: linear-gradient(90deg, var(--gold), #ffd700, var(--gold-light));
+}
+
 /* --- Header Buttons --- */
 .header-btn {
   background: rgba(255,255,255,0.08);

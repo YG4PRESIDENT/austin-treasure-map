@@ -1,6 +1,6 @@
 // ============================================================
 // Austin Treasure Map — Place Data & Category Definitions
-// All 88 places with verified GPS coordinates
+// 85 places with verified GPS coordinates (1 pending location: Hanshin Pocha)
 // ============================================================
 
 export const CATEGORIES = {
