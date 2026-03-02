@@ -825,19 +825,53 @@ body.dark-mode .mastery-item__name {
   gap: 6px;
 }
 
-/* Floating picker on map (desktop) */
-.style-picker--floating {
+/* ═══ Map Top Bar (floating over map, desktop) ═══ */
+.map-top-bar {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 400;
+  background: var(--cream);
+  border-bottom: 1px solid rgba(196,136,60,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 8px 12px;
   display: flex;
-  gap: 5px;
-  margin-bottom: 0;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.style-picker--floating .style-picker__btn {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+.map-top-bar__row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Category chips inside top bar — compact pill style */
+.map-top-bar__row .group-btn {
+  flex: 0 0 auto;
+  min-width: auto;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  border-radius: 20px;
+}
+
+.map-top-bar__row .group-btn--all {
+  flex: 0 0 auto;
+}
+
+.map-top-bar__row .group-btn__icon {
+  display: inline;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  margin-right: 2px;
+}
+
+/* Dark mode top bar */
+body.dark-mode .map-top-bar {
+  background: #1a1a1a;
+  border-color: #333;
 }
 
 .style-picker__btn {
@@ -912,8 +946,8 @@ body.dark-mode .style-picker--mobile {
     display: none;
   }
 
-  /* Hide floating style picker on mobile (lives in Profile tab instead) */
-  .style-picker--floating {
+  /* Hide map top bar on mobile (uses mobile-filter-chips + Profile tab picker instead) */
+  .map-top-bar {
     display: none;
   }
 

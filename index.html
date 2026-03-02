@@ -51,9 +51,6 @@
           <div id="search-results" class="search-results"></div>
         </div>
 
-        <!-- Category Group Buttons -->
-        <div id="filter-bar" class="nav-sidebar__filters"></div>
-
         <!-- Progress Ring -->
         <div class="nav-sidebar__progress" id="progress-section">
           <svg class="progress-ring" viewBox="0 0 120 120">
@@ -84,13 +81,16 @@
     <main id="map-area">
       <div id="map"></div>
 
-      <!-- Map Style Picker (floating on map, desktop only) -->
-      <div class="style-picker style-picker--floating">
-        <button class="style-picker__btn" data-layer="🗺️ Treasure Map">🗺️ Map</button>
-        <button class="style-picker__btn" data-layer="⛰️ Explorer Map">⛰️ Topo</button>
-        <button class="style-picker__btn" data-layer="🏙️ City Map">🏙️ City</button>
-        <button class="style-picker__btn" data-layer="🌙 Dark Mode">🌙 Dark</button>
-        <button class="style-picker__btn" data-layer="🛰️ Satellite">🛰️ Sat</button>
+      <!-- Map Top Bar: style picker + category filters (desktop) -->
+      <div class="map-top-bar">
+        <div class="map-top-bar__row">
+          <button class="style-picker__btn" data-layer="🗺️ Treasure Map">🗺️ Map</button>
+          <button class="style-picker__btn" data-layer="⛰️ Explorer Map">⛰️ Topo</button>
+          <button class="style-picker__btn" data-layer="🏙️ City Map">🏙️ City</button>
+          <button class="style-picker__btn" data-layer="🌙 Dark Mode">🌙 Dark</button>
+          <button class="style-picker__btn" data-layer="🛰️ Satellite">🛰️ Sat</button>
+        </div>
+        <div id="filter-bar" class="map-top-bar__row"></div>
       </div>
 
       <!-- Mobile category chips (visible only on mobile Map tab) -->

@@ -87,12 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2b. Wire up style pickers (after map so getCurrentBaseLayerName works)
     setupStylePickers();
 
-    // 3. Neighborhoods — add to map and register in layer control
+    // 3. Neighborhoods — add directly to map
     const { neighborhoodLayer } = initNeighborhoods(map);
     neighborhoodLayer.addTo(map);
-    if (map._layerControl) {
-      map._layerControl.addOverlay(neighborhoodLayer, '🏘️ Neighborhoods');
-    }
 
     // 4. Sidebar (with callback for visited changes)
     initSidebar({

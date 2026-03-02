@@ -9,40 +9,40 @@
 }
 
 .marker-pin {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
   position: relative;
   transition: all 0.25s ease;
 }
 
 .marker-emoji {
   transform: rotate(45deg);
-  font-size: 14px;
+  font-size: 10px;
   line-height: 1;
 }
 
 .marker-check {
   position: absolute;
-  bottom: -4px;
-  right: -4px;
+  bottom: -3px;
+  right: -3px;
   transform: rotate(45deg);
   background: var(--gold);
   color: white;
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  font-size: 8px;
+  font-size: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 /* Discovered (visited) */
@@ -72,18 +72,18 @@
 /* Day trip badge */
 .day-trip-badge {
   position: absolute;
-  bottom: -18px;
+  bottom: -14px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--gold-dark);
   color: white;
   font-family: var(--font-ui);
-  font-size: 7px;
+  font-size: 6px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 1px 5px;
-  border-radius: 3px;
+  letter-spacing: 0.3px;
+  padding: 1px 4px;
+  border-radius: 2px;
   white-space: nowrap;
   line-height: 1.4;
 }

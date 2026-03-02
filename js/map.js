@@ -88,7 +88,8 @@ function createMarkerIcon(place) {
   const visited = isVisited(place.id);
   const isDayTrip = place.dayTrip;
 
-  const size = isDayTrip ? 40 : 32;
+  const size = isDayTrip ? 28 : 20;
+  const stem = isDayTrip ? 8 : 6;
   const glowClass = visited ? 'marker-discovered' : 'marker-undiscovered';
   const dayTripBadge = isDayTrip
     ? `<span class="day-trip-badge">DAY TRIP</span>`
@@ -103,9 +104,9 @@ function createMarkerIcon(place) {
       </div>
       ${dayTripBadge}
     `,
-    iconSize: [size, size + 10],
-    iconAnchor: [size / 2, size + 10],
-    popupAnchor: [0, -(size + 5)],
+    iconSize: [size, size + stem],
+    iconAnchor: [size / 2, size + stem],
+    popupAnchor: [0, -(size + stem / 2)],
   });
 }
 
@@ -134,11 +135,9 @@ export function initMap() {
   // Zoom control on top-right
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  // Overlay-only layer control (base layer switching handled by custom style picker)
-  map._layerControl = L.control.layers({}, overlays, {
-    position: 'topright',
-    collapsed: true,
-  }).addTo(map);
+  // No layer control on map — style picker handles base layers,
+  // overlays are added directly without a toggle UI
+  map._layerControl = null;
 
   // Save style preference on base layer change + sync picker buttons
   map.on('baselayerchange', (e) => {
@@ -195,7 +194,7 @@ export function addMarkers(onMarkerClick) {
 
     marker.bindTooltip(place.name, {
       direction: 'top',
-      offset: [0, -36],
+      offset: [0, -22],
       className: 'treasure-tooltip',
     });
 
