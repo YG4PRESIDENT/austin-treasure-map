@@ -52,7 +52,7 @@ export function initShareButton() {
       try {
         await navigator.share({
           title: "Yahir's Austin Treasure Map",
-          text: 'Check out my curated Austin guide — 90+ hidden gems!',
+          text: 'Check out my curated Austin guide — 85+ hidden gems!',
           url: shareUrl,
         });
         return;
