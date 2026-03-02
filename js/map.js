@@ -8,6 +8,8 @@ import { isVisited, getPreference, setPreference } from './state.js';
 let map;
 let markersLayer;
 let markerMap = {};  // placeId → L.marker
+let baseLayers = {};
+let currentBaseLayerName = '';
 
 const AUSTIN_CENTER = [30.2672, -97.7431];
 const DEFAULT_ZOOM = 12;
@@ -109,12 +111,13 @@ function createMarkerIcon(place) {
 
 // --- Public API ---
 export function initMap() {
-  const baseLayers = createBaseLayers();
+  baseLayers = createBaseLayers();
   const overlays = createOverlays();
 
   // Restore saved style or default to City Map (most reliable)
   const savedStyle = getPreference('mapStyle', '🏙️ City Map');
   const defaultLayer = baseLayers[savedStyle] || baseLayers['🏙️ City Map'];
+  currentBaseLayerName = baseLayers[savedStyle] ? savedStyle : '🏙️ City Map';
 
   // Build maxBounds here (inside function, not at top-level)
   const maxBounds = L.latLngBounds([29.50, -99.10], [30.75, -97.20]);
@@ -131,24 +134,26 @@ export function initMap() {
   // Zoom control on top-right
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  // Layer control (stored on map for later overlay additions)
-  map._layerControl = L.control.layers(baseLayers, overlays, {
+  // Overlay-only layer control (base layer switching handled by custom style picker)
+  map._layerControl = L.control.layers({}, overlays, {
     position: 'topright',
     collapsed: true,
   }).addTo(map);
 
-  // Save style preference on base layer change
+  // Save style preference on base layer change + sync picker buttons
   map.on('baselayerchange', (e) => {
+    currentBaseLayerName = e.name;
     setPreference('mapStyle', e.name);
     document.body.classList.toggle('dark-mode', e.name === '🌙 Dark Mode');
     document.body.classList.toggle('sepia-mode', e.name === '🏙️ City Map');
+    syncStylePickerButtons();
   });
 
   // Set initial mode classes
-  if (savedStyle === '🌙 Dark Mode') {
+  if (currentBaseLayerName === '🌙 Dark Mode') {
     document.body.classList.add('dark-mode');
   }
-  if (savedStyle === '🏙️ City Map') {
+  if (currentBaseLayerName === '🏙️ City Map') {
     document.body.classList.add('sepia-mode');
   }
 
@@ -245,4 +250,37 @@ export function getMarkerMap() {
 
 export function getMarkersLayer() {
   return markersLayer;
+}
+
+// --- Style Picker Support ---
+
+/** Update all style picker buttons to reflect the current base layer */
+function syncStylePickerButtons() {
+  document.querySelectorAll('.style-picker__btn').forEach(btn => {
+    btn.classList.toggle('style-picker__btn--active', btn.dataset.layer === currentBaseLayerName);
+  });
+}
+
+/** Switch the active base layer by name */
+export function switchBaseLayer(name) {
+  const layer = baseLayers[name];
+  if (!layer || name === currentBaseLayerName) return;
+
+  // Remove current base layer
+  const currentLayer = baseLayers[currentBaseLayerName];
+  if (currentLayer) map.removeLayer(currentLayer);
+
+  // Add new base layer and fire event to keep preferences/body classes in sync
+  map.addLayer(layer);
+  map.fire('baselayerchange', { name, layer });
+}
+
+/** Get current base layer name */
+export function getCurrentBaseLayerName() {
+  return currentBaseLayerName;
+}
+
+/** Get all base layer names */
+export function getBaseLayerNames() {
+  return Object.keys(baseLayers);
 }

@@ -2,6 +2,8 @@
 // Austin Treasure Map — Mobile Bottom Tabs
 // ============================================================
 
+import { getMap } from './map.js';
+
 const TABS = [
   { id: 'map',     icon: '🗺',  label: 'Map' },
   { id: 'search',  icon: '🔍', label: 'Search' },
@@ -47,9 +49,12 @@ export function switchTab(tabId) {
   if (tabId === 'map') {
     panels.classList.remove('mobile-panels--visible');
     mapArea.style.display = '';
+    // Leaflet needs to re-measure after display:none → visible
+    const m = getMap();
+    if (m) setTimeout(() => m.invalidateSize(), 50);
   } else {
     panels.classList.add('mobile-panels--visible');
-    mapArea.style.display = '';
+    mapArea.style.display = 'none';
 
     // Show the right panel
     document.querySelectorAll('.mobile-panel').forEach(p => {

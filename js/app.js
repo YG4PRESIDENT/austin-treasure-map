@@ -2,7 +2,7 @@
 // Austin Treasure Map — App Entry Point
 // ============================================================
 
-import { initMap, addMarkers, flyToPlace } from './map.js';
+import { initMap, addMarkers, flyToPlace, switchBaseLayer, getCurrentBaseLayerName } from './map.js';
 import { initSidebar, openSidebar, updateProgressRing } from './sidebar.js';
 import { initNeighborhoods, refreshNeighborhoodMastery, getAllMasteryData } from './neighborhoods.js';
 import { initFilters } from './filters.js';
@@ -62,6 +62,17 @@ function renderMasteryList() {
   `;
 }
 
+// --- Style Picker wiring ---
+function setupStylePickers() {
+  const current = getCurrentBaseLayerName();
+  document.querySelectorAll('.style-picker__btn').forEach(btn => {
+    // Mark the initial active button
+    btn.classList.toggle('style-picker__btn--active', btn.dataset.layer === current);
+    // Bind click → switch base layer
+    btn.addEventListener('click', () => switchBaseLayer(btn.dataset.layer));
+  });
+}
+
 // --- Boot ---
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -72,6 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Initialize map
     const map = initMap();
+
+    // 2b. Wire up style pickers (after map so getCurrentBaseLayerName works)
+    setupStylePickers();
 
     // 3. Neighborhoods — add to map and register in layer control
     const { neighborhoodLayer } = initNeighborhoods(map);
