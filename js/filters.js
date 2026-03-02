@@ -59,9 +59,10 @@ function buildCategoryBar() {
   });
 
   // Day Trips toggle
+  const dayTripCount = PLACES.filter(p => p.dayTrip && p.lat && p.lng).length;
   const dtBtn = document.createElement('button');
   dtBtn.className = 'filter-btn filter-daytrip active';
-  dtBtn.innerHTML = '🚗 Day Trips';
+  dtBtn.innerHTML = `🚗 Day Trips <span class="filter-count">${dayTripCount}</span>`;
   dtBtn.addEventListener('click', () => {
     showDayTrips = !showDayTrips;
     dtBtn.classList.toggle('active', showDayTrips);
@@ -189,7 +190,7 @@ function toggleListView() {
   }
 }
 
-function renderListView() {
+export function renderListView() {
   const container = el('list-view-content');
   if (!container) return;
 

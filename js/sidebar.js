@@ -2,24 +2,29 @@
 // Austin Treasure Map — Sidebar Detail Panel
 // ============================================================
 
-import { CATEGORIES } from './data.js';
-import { isVisited, toggleVisited, getNote, setNote } from './state.js';
+import { PLACES, CATEGORIES } from './data.js';
+import { isVisited, toggleVisited, getNote, setNote, getVisitedCount } from './state.js';
 import { refreshMarkerIcon } from './map.js';
 
 let currentPlace = null;
 let noteDebounce = null;
+let onVisitedChange = null; // callback for list view refresh
 
 function el(id) { return document.getElementById(id); }
 
-export function initSidebar() {
+export function initSidebar(opts = {}) {
+  if (opts.onVisitedChange) onVisitedChange = opts.onVisitedChange;
+
   // Close button
   el('sidebar-close').addEventListener('click', closeSidebar);
 
   // Click outside sidebar on map to close
   document.getElementById('map').addEventListener('click', (e) => {
-    if (e.target.closest('.leaflet-marker-icon') || e.target.closest('.leaflet-popup')) return;
-    // Only close if clicking on the map tile area, not controls
+    if (!currentPlace) return;
+    if (e.target.closest('.leaflet-marker-icon')) return;
+    if (e.target.closest('.leaflet-popup')) return;
     if (e.target.closest('.leaflet-control')) return;
+    closeSidebar();
   });
 
   // Visited toggle
@@ -30,6 +35,7 @@ export function initSidebar() {
     updateVisitedUI(nowVisited);
     updateProgressBar();
     if (nowVisited) playDiscoveredAnimation();
+    if (onVisitedChange) onVisitedChange();
   });
 
   // Notes auto-save
@@ -38,6 +44,7 @@ export function initSidebar() {
     clearTimeout(noteDebounce);
     noteDebounce = setTimeout(() => {
       setNote(currentPlace.id, e.target.value);
+      showSaveIndicator();
     }, 400);
   });
 }
@@ -103,30 +110,37 @@ function playDiscoveredAnimation() {
   setTimeout(() => btn.classList.remove('celebrate'), 800);
 }
 
-// Progress bar — exported so app.js can call it on init
+function showSaveIndicator() {
+  const label = el('sidebar-notes-section')?.querySelector('.notes-label');
+  if (!label) return;
+  label.textContent = 'Personal Notes — saved ✓';
+  setTimeout(() => { label.textContent = 'Personal Notes'; }, 1500);
+}
+
+// Progress bar
 export function updateProgressBar() {
-  // Dynamically import to get count — avoid circular dep
-  import('./data.js').then(({ PLACES }) => {
-    import('./state.js').then(({ getVisitedCount }) => {
-      const total = PLACES.filter(p => p.lat && p.lng).length;
-      const count = getVisitedCount();
-      const pct = total > 0 ? (count / total) * 100 : 0;
+  const total = PLACES.filter(p => p.lat && p.lng).length;
+  const count = getVisitedCount();
+  const pct = total > 0 ? (count / total) * 100 : 0;
 
-      el('progress-count').textContent = `${count} / ${total}`;
-      el('progress-fill').style.width = `${pct}%`;
+  el('progress-count').textContent = `${count} / ${total}`;
+  el('progress-fill').style.width = `${pct}%`;
 
-      // Milestone animations
-      const bar = el('progress-bar');
-      bar.classList.remove('milestone');
-      if (pct >= 25 && pct < 50) bar.dataset.milestone = '25';
-      else if (pct >= 50 && pct < 75) bar.dataset.milestone = '50';
-      else if (pct >= 75 && pct < 100) bar.dataset.milestone = '75';
-      else if (pct >= 100) {
-        bar.dataset.milestone = '100';
-        bar.classList.add('milestone');
-      }
-    });
-  });
+  // Milestone check
+  const bar = el('progress-bar');
+  bar.classList.remove('milestone');
+  if (pct >= 100) {
+    bar.dataset.milestone = '100';
+    bar.classList.add('milestone');
+  } else if (pct >= 75) {
+    bar.dataset.milestone = '75';
+  } else if (pct >= 50) {
+    bar.dataset.milestone = '50';
+  } else if (pct >= 25) {
+    bar.dataset.milestone = '25';
+  } else {
+    delete bar.dataset.milestone;
+  }
 }
 
 export function getCurrentPlace() {

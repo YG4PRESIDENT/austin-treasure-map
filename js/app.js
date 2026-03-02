@@ -5,7 +5,7 @@
 import { initMap, addMarkers } from './map.js';
 import { initSidebar, openSidebar, updateProgressBar } from './sidebar.js';
 import { initNeighborhoods, getNeighborhoodLayer } from './neighborhoods.js';
-import { initFilters } from './filters.js';
+import { initFilters, renderListView } from './filters.js';
 import { isShareMode, initShareMode, initShareButton } from './share.js';
 import { exportData, importData } from './state.js';
 
@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add as toggleable overlay — default ON
   neighborhoodLayer.addTo(map);
 
-  // 4. Sidebar
-  initSidebar();
+  // 4. Sidebar (with callback to refresh list view on visited change)
+  initSidebar({ onVisitedChange: () => renderListView() });
 
   // 5. Add markers (with sidebar callback)
   addMarkers((place) => openSidebar(place));
