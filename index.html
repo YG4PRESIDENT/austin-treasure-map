@@ -35,72 +35,126 @@
   </div>
 
   <div id="app">
-    <!-- Header -->
-    <header class="app-header">
-      <h1 id="app-title">YAHIR'S AUSTIN TREASURE MAP</h1>
-      <div class="header-right">
-        <div id="progress-bar">
-          <span id="progress-count">0 / 0</span>
-          <div class="progress-track">
-            <div id="progress-fill" style="width: 0%"></div>
+
+    <!-- ─── Left Navigation Sidebar (desktop) ─── -->
+    <nav id="nav-sidebar">
+      <div class="nav-sidebar__scroll">
+
+        <!-- Title -->
+        <div class="nav-sidebar__header">
+          <h1 class="nav-sidebar__title">☠ YAHIR'S AUSTIN<br>TREASURE MAP</h1>
+        </div>
+
+        <!-- Search -->
+        <div class="nav-sidebar__search">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search treasures…" autocomplete="off">
+          </div>
+          <div id="search-results" class="search-results"></div>
+        </div>
+
+        <!-- Category Group Buttons -->
+        <div id="filter-bar" class="nav-sidebar__filters"></div>
+
+        <!-- Progress Ring -->
+        <div class="nav-sidebar__progress" id="progress-section">
+          <svg class="progress-ring" viewBox="0 0 120 120">
+            <circle class="progress-ring__track" cx="60" cy="60" r="52" />
+            <circle class="progress-ring__fill" id="progress-ring-fill" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="progress-ring__label">
+            <span class="progress-ring__count" id="progress-count">0</span>
+            <span class="progress-ring__total">/ 85</span>
+            <span class="progress-ring__text">discovered</span>
           </div>
         </div>
-        <button class="header-btn" id="share-btn">📤 Share</button>
-        <button class="header-btn" id="export-btn">💾 Export</button>
-        <button class="header-btn" id="import-btn">📂 Import</button>
-      </div>
-    </header>
 
-    <!-- Filter Bar -->
-    <div class="filter-bar-wrapper">
-      <div class="filter-bar-controls">
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Search treasures…" autocomplete="off">
+        <!-- Quest Card -->
+        <div id="quest-container" class="nav-sidebar__quest"></div>
+
+        <!-- Footer Actions -->
+        <div class="nav-sidebar__footer">
+          <button class="nav-btn" id="share-btn">📤 Share</button>
+          <button class="nav-btn" id="export-btn">💾 Export</button>
+          <button class="nav-btn" id="import-btn">📂 Import</button>
         </div>
-        <select id="neighborhood-select">
-          <option value="">Zoom to neighborhood…</option>
-        </select>
-        <button id="list-view-toggle">📋 List View</button>
-        <select id="sort-select">
-          <option value="alpha">A → Z</option>
-          <option value="category">By Category</option>
-          <option value="neighborhood">By Neighborhood</option>
-          <option value="visited">Visited First</option>
-          <option value="unvisited">Unvisited First</option>
-        </select>
-      </div>
-      <div id="filter-bar"></div>
-    </div>
 
-    <!-- Map + Sidebar Area -->
-    <div class="map-area">
+      </div>
+    </nav>
+
+    <!-- ─── Map Area ─── -->
+    <main id="map-area">
       <div id="map"></div>
-      <div id="list-view">
-        <div id="list-view-content"></div>
+
+      <!-- Mobile category chips (visible only on mobile Map tab) -->
+      <div id="mobile-filter-chips" class="mobile-filter-chips"></div>
+    </main>
+
+    <!-- ─── Detail Panel (overlays nav on desktop, bottom sheet on mobile) ─── -->
+    <aside id="detail-panel" aria-hidden="true">
+      <button id="detail-close" class="detail-panel__close">✕</button>
+      <div class="detail-panel__content">
+        <h2 id="detail-name" class="detail-panel__name"></h2>
+        <div class="detail-panel__tags">
+          <span id="detail-category" class="detail-tag detail-tag--category"></span>
+          <span id="detail-neighborhood" class="detail-tag detail-tag--neighborhood"></span>
+          <span id="detail-daytrip" class="detail-tag detail-tag--daytrip"></span>
+        </div>
+        <p id="detail-description" class="detail-panel__description"></p>
+        <p id="detail-source" class="detail-panel__source"></p>
+        <a id="detail-address" class="detail-panel__address" href="#" target="_blank" rel="noopener"></a>
+        <button id="detail-visited-btn" class="detail-panel__visited-btn">☐ Mark as Discovered</button>
+        <div id="detail-notes-section" class="detail-panel__notes">
+          <label class="notes-label" for="detail-notes">Personal Notes</label>
+          <textarea id="detail-notes" placeholder="Your thoughts, tips, review…"></textarea>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── Mobile Bottom Tabs (hidden on desktop) ─── -->
+    <div id="mobile-tabs" class="mobile-tabs"></div>
+
+    <!-- ─── Mobile Tab Panels (hidden on desktop) ─── -->
+    <div id="mobile-panels" class="mobile-panels">
+      <div class="mobile-panel" data-panel="search">
+        <div class="mobile-panel__header">
+          <h2>Search Treasures</h2>
+        </div>
+        <div class="mobile-panel__body">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="mobile-search-input" placeholder="Search treasures…" autocomplete="off">
+          </div>
+          <div id="mobile-search-results" class="mobile-search-results"></div>
+        </div>
       </div>
 
-      <!-- Sidebar Detail Panel -->
-      <aside id="sidebar" aria-hidden="true">
-        <button id="sidebar-close">✕</button>
-        <div class="sidebar-content">
-          <h2 id="sidebar-name"></h2>
-          <div class="sidebar-tags">
-            <span id="sidebar-category"></span>
-            <span id="sidebar-neighborhood"></span>
-            <span id="sidebar-daytrip"></span>
-          </div>
-          <p id="sidebar-description"></p>
-          <p id="sidebar-source"></p>
-          <a id="sidebar-address" href="#" target="_blank" rel="noopener"></a>
-          <button id="sidebar-visited-btn">☐ Mark as Discovered</button>
-          <div id="sidebar-notes-section">
-            <label class="notes-label" for="sidebar-notes">Personal Notes</label>
-            <textarea id="sidebar-notes" placeholder="Your thoughts, tips, review…"></textarea>
+      <div class="mobile-panel" data-panel="quests">
+        <div class="mobile-panel__header">
+          <h2>Quests & Mastery</h2>
+        </div>
+        <div class="mobile-panel__body">
+          <div id="mobile-quest-container"></div>
+          <div id="mobile-mastery-list" class="mastery-list"></div>
+        </div>
+      </div>
+
+      <div class="mobile-panel" data-panel="profile">
+        <div class="mobile-panel__header">
+          <h2>Your Journey</h2>
+        </div>
+        <div class="mobile-panel__body">
+          <div id="mobile-progress-section" class="mobile-progress-section"></div>
+          <div class="mobile-profile-actions">
+            <button class="nav-btn" id="mobile-share-btn">📤 Share</button>
+            <button class="nav-btn" id="mobile-export-btn">💾 Export</button>
+            <button class="nav-btn" id="mobile-import-btn">📂 Import</button>
           </div>
         </div>
-      </aside>
+      </div>
     </div>
+
   </div>
 
   <!-- Leaflet JS -->

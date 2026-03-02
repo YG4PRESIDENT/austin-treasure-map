@@ -15,6 +15,22 @@ export const CATEGORIES = {
   unique:     { label: 'Unique & Quirky',    icon: '⭐', color: '#ff8f00' },
 };
 
+// ─── Category Groups (5 simplified groups for UI) ─────────────────
+export const CATEGORY_GROUPS = {
+  eat:     { label: 'Eat',     icon: '🍽', color: '#c4883c', categories: ['food', 'coffee', 'icecream'] },
+  drink:   { label: 'Drink',   icon: '🥃', color: '#8b4513', categories: ['bars'] },
+  explore: { label: 'Explore', icon: '🌿', color: '#2d5016', categories: ['nature', 'culture'] },
+  fun:     { label: 'Fun',     icon: '🎭', color: '#6b3074', categories: ['music', 'unique'] },
+  shop:    { label: 'Shop',    icon: '🛍', color: '#b71c1c', categories: ['shopping'] },
+};
+
+export function getGroupForCategory(cat) {
+  for (const [key, group] of Object.entries(CATEGORY_GROUPS)) {
+    if (group.categories.includes(cat)) return key;
+  }
+  return 'fun'; // fallback
+}
+
 export const PLACES = [
 
   // ─── FOOD & RESTAURANTS (33) ────────────────────────────────

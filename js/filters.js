@@ -1,119 +1,122 @@
 // ============================================================
-// Austin Treasure Map — Filters, Search & List View
+// Austin Treasure Map — Filters & Search (5 Category Groups)
 // ============================================================
 
-import { PLACES, CATEGORIES } from './data.js';
-import { isVisited, getNote } from './state.js';
-import { getMarkersLayer, getMarkerMap, flyToPlace, getMap } from './map.js';
+import { PLACES, CATEGORIES, CATEGORY_GROUPS } from './data.js';
+import { isVisited } from './state.js';
+import { getMarkersLayer, getMarkerMap, flyToPlace } from './map.js';
 import { openSidebar } from './sidebar.js';
-import { getNeighborhoodNames } from './neighborhoods.js';
 
 let activeCategories = new Set(Object.keys(CATEGORIES));
 let showDayTrips = true;
-let listViewActive = false;
 
 function el(id) { return document.getElementById(id); }
 
 export function initFilters() {
-  buildCategoryBar();
-  buildSearchBox();
-  buildListView();
-  buildNeighborhoodDropdown();
+  buildGroupButtons(el('filter-bar'));
+  buildGroupButtons(el('mobile-filter-chips'));
+  buildSearchBox('search-input', 'search-results');
+  buildSearchBox('mobile-search-input', 'mobile-search-results');
   applyFilters();
 }
 
-// --- Category Filter Bar ---
-function buildCategoryBar() {
-  const bar = el('filter-bar');
-  if (!bar) return;
+// --- Group Buttons (5 groups + "All") ---
+function buildGroupButtons(container) {
+  if (!container) return;
 
   // "All" button
   const allBtn = document.createElement('button');
-  allBtn.className = 'filter-btn filter-all active';
+  allBtn.className = 'group-btn group-btn--all active';
+  allBtn.dataset.group = 'all';
   allBtn.textContent = 'All';
   allBtn.addEventListener('click', () => {
     activeCategories = new Set(Object.keys(CATEGORIES));
-    updateFilterButtons();
+    showDayTrips = true;
+    syncAllGroupButtons();
     applyFilters();
   });
-  bar.appendChild(allBtn);
+  container.appendChild(allBtn);
 
-  // Category buttons
-  Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    const count = PLACES.filter(p => p.category === key).length;
+  // Group buttons
+  Object.entries(CATEGORY_GROUPS).forEach(([key, group]) => {
+    const count = PLACES.filter(p =>
+      group.categories.includes(p.category) && p.lat && p.lng
+    ).length;
+
     const btn = document.createElement('button');
-    btn.className = 'filter-btn active';
-    btn.dataset.category = key;
-    btn.innerHTML = `${cat.icon} ${cat.label} <span class="filter-count">${count}</span>`;
-    btn.style.setProperty('--cat-color', cat.color);
-    btn.addEventListener('click', () => {
-      if (activeCategories.has(key)) {
-        activeCategories.delete(key);
-      } else {
-        activeCategories.add(key);
-      }
-      updateFilterButtons();
-      applyFilters();
-    });
-    bar.appendChild(btn);
+    btn.className = 'group-btn active';
+    btn.dataset.group = key;
+    btn.style.setProperty('--group-color', group.color);
+    btn.innerHTML = `<span class="group-btn__icon">${group.icon}</span>${group.label} <span class="group-btn__count">${count}</span>`;
+    btn.addEventListener('click', () => toggleGroup(key));
+    container.appendChild(btn);
   });
-
-  // Day Trips toggle
-  const dayTripCount = PLACES.filter(p => p.dayTrip && p.lat && p.lng).length;
-  const dtBtn = document.createElement('button');
-  dtBtn.className = 'filter-btn filter-daytrip active';
-  dtBtn.innerHTML = `🚗 Day Trips <span class="filter-count">${dayTripCount}</span>`;
-  dtBtn.addEventListener('click', () => {
-    showDayTrips = !showDayTrips;
-    dtBtn.classList.toggle('active', showDayTrips);
-    applyFilters();
-  });
-  bar.appendChild(dtBtn);
 }
 
-function updateFilterButtons() {
-  document.querySelectorAll('.filter-btn[data-category]').forEach(btn => {
-    btn.classList.toggle('active', activeCategories.has(btn.dataset.category));
+function toggleGroup(groupKey) {
+  const group = CATEGORY_GROUPS[groupKey];
+  if (!group) return;
+
+  // Check if all categories in this group are currently active
+  const allActive = group.categories.every(c => activeCategories.has(c));
+
+  if (allActive) {
+    // Deactivate this group
+    group.categories.forEach(c => activeCategories.delete(c));
+  } else {
+    // Activate this group
+    group.categories.forEach(c => activeCategories.add(c));
+  }
+
+  syncAllGroupButtons();
+  applyFilters();
+}
+
+function syncAllGroupButtons() {
+  // Sync all group button instances (desktop nav + mobile chips)
+  document.querySelectorAll('.group-btn').forEach(btn => {
+    const groupKey = btn.dataset.group;
+    if (groupKey === 'all') {
+      const allActive = activeCategories.size === Object.keys(CATEGORIES).length;
+      btn.classList.toggle('active', allActive);
+    } else {
+      const group = CATEGORY_GROUPS[groupKey];
+      if (group) {
+        const allActive = group.categories.every(c => activeCategories.has(c));
+        btn.classList.toggle('active', allActive);
+      }
+    }
   });
-  const allActive = activeCategories.size === Object.keys(CATEGORIES).length;
-  const allBtn = document.querySelector('.filter-all');
-  if (allBtn) allBtn.classList.toggle('active', allActive);
 }
 
 // --- Search ---
-function buildSearchBox() {
-  const input = el('search-input');
+function buildSearchBox(inputId, resultsId) {
+  const input = el(inputId);
   if (!input) return;
 
   input.addEventListener('input', () => {
     const query = input.value.toLowerCase().trim();
     if (query) {
       applyFilters(query);
-      showSearchResults(query);
+      showSearchResults(query, resultsId, inputId);
     } else {
-      hideSearchResults();
+      hideSearchResults(resultsId);
       applyFilters();
     }
   });
 
-  // Close search results on Escape
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       input.value = '';
-      hideSearchResults();
+      hideSearchResults(resultsId);
       applyFilters();
     }
   });
 }
 
-function showSearchResults(query) {
-  let results = el('search-results');
-  if (!results) {
-    results = document.createElement('div');
-    results.id = 'search-results';
-    results.className = 'search-results';
-    el('search-input').parentElement.appendChild(results);
-  }
+function showSearchResults(query, resultsId, inputId) {
+  const results = el(resultsId);
+  if (!results) return;
 
   const matches = PLACES.filter(p =>
     p.lat && p.lng &&
@@ -142,9 +145,10 @@ function showSearchResults(query) {
         if (place) {
           flyToPlace(place);
           openSidebar(place);
-          hideSearchResults();
-          el('search-input').value = '';
-          if (listViewActive) toggleListView();
+          hideSearchResults(resultsId);
+          el(inputId).value = '';
+          // On mobile, switch back to map tab
+          import('./mobile.js').then(m => m.switchTab('map')).catch(() => {});
         }
       });
     });
@@ -153,129 +157,9 @@ function showSearchResults(query) {
   results.style.display = 'block';
 }
 
-function hideSearchResults() {
-  const results = el('search-results');
+function hideSearchResults(resultsId) {
+  const results = el(resultsId);
   if (results) results.style.display = 'none';
-}
-
-// --- List View ---
-function buildListView() {
-  const btn = el('list-view-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', toggleListView);
-
-  // Sort controls
-  el('sort-select')?.addEventListener('change', () => renderListView());
-}
-
-function toggleListView() {
-  listViewActive = !listViewActive;
-  const container = el('list-view');
-  const mapEl = el('map');
-  const btn = el('list-view-toggle');
-
-  if (listViewActive) {
-    container.style.display = 'block';
-    mapEl.style.display = 'none';
-    btn.classList.add('active');
-    btn.textContent = '🗺️ Map View';
-    renderListView();
-  } else {
-    container.style.display = 'none';
-    mapEl.style.display = 'block';
-    btn.classList.remove('active');
-    btn.textContent = '📋 List View';
-    // Invalidate map size after re-showing
-    setTimeout(() => getMap().invalidateSize(), 100);
-  }
-}
-
-export function renderListView() {
-  const container = el('list-view-content');
-  if (!container) return;
-
-  const sort = el('sort-select')?.value || 'alpha';
-  let places = PLACES.filter(p => p.lat && p.lng);
-
-  // Apply current filters
-  places = places.filter(p => activeCategories.has(p.category));
-  if (!showDayTrips) places = places.filter(p => !p.dayTrip);
-
-  // Sort
-  switch (sort) {
-    case 'alpha':
-      places.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    case 'category':
-      places.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
-      break;
-    case 'neighborhood':
-      places.sort((a, b) => a.neighborhood.localeCompare(b.neighborhood) || a.name.localeCompare(b.name));
-      break;
-    case 'visited':
-      places.sort((a, b) => (isVisited(b.id) ? 1 : 0) - (isVisited(a.id) ? 1 : 0) || a.name.localeCompare(b.name));
-      break;
-    case 'unvisited':
-      places.sort((a, b) => (isVisited(a.id) ? 1 : 0) - (isVisited(b.id) ? 1 : 0) || a.name.localeCompare(b.name));
-      break;
-  }
-
-  container.innerHTML = places.map(p => {
-    const cat = CATEGORIES[p.category] || {};
-    const visited = isVisited(p.id);
-    const note = getNote(p.id);
-    return `<div class="list-item ${visited ? 'list-item-visited' : ''}" data-id="${p.id}">
-      <div class="list-item-icon" style="background:${cat.color}">${cat.icon}</div>
-      <div class="list-item-info">
-        <div class="list-item-name">${p.name} ${visited ? '<span class="list-check">✓</span>' : ''}</div>
-        <div class="list-item-meta">
-          <span class="list-item-neighborhood">${p.neighborhood}</span>
-          ${p.dayTrip ? '<span class="list-item-daytrip">🚗 Day Trip</span>' : ''}
-        </div>
-        ${note ? `<div class="list-item-note">"${note.slice(0, 60)}${note.length > 60 ? '…' : ''}"</div>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-
-  container.querySelectorAll('.list-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const place = PLACES.find(p => p.id === item.dataset.id);
-      if (place) {
-        toggleListView();
-        setTimeout(() => {
-          flyToPlace(place);
-          openSidebar(place);
-        }, 150);
-      }
-    });
-  });
-}
-
-// --- Neighborhood Dropdown ---
-function buildNeighborhoodDropdown() {
-  const select = el('neighborhood-select');
-  if (!select) return;
-
-  const names = getNeighborhoodNames();
-  names.sort().forEach(name => {
-    const count = PLACES.filter(p => p.neighborhood === name).length;
-    if (count === 0) return;
-    const opt = document.createElement('option');
-    opt.value = name;
-    opt.textContent = `${name} (${count})`;
-    select.appendChild(opt);
-  });
-
-  select.addEventListener('change', () => {
-    const name = select.value;
-    if (!name) return;
-    const placesInHood = PLACES.filter(p => p.neighborhood === name && p.lat && p.lng);
-    if (placesInHood.length > 0) {
-      const bounds = L.latLngBounds(placesInHood.map(p => [p.lat, p.lng]));
-      getMap().fitBounds(bounds.pad(0.3));
-    }
-    select.value = '';
-  });
 }
 
 // --- Apply Filters to Map ---

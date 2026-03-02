@@ -116,3 +116,33 @@ export function importData(file) {
 export function getVisitedCount() {
   return Object.keys(getVisited()).length;
 }
+
+// --- Quest state ---
+export function getQuestHistory() {
+  return safeGet('questHistory', []);
+}
+
+export function addQuestToHistory(placeId) {
+  const history = getQuestHistory();
+  if (!history.includes(placeId)) {
+    history.push(placeId);
+    safeSet('questHistory', history);
+  }
+}
+
+export function getCurrentQuest() {
+  return safeGet('currentQuest', null);
+}
+
+export function setCurrentQuest(placeId) {
+  safeSet('currentQuest', placeId);
+}
+
+// --- Milestone state ---
+export function getLastMilestoneSeen() {
+  return safeGet('lastMilestone', 0);
+}
+
+export function setLastMilestoneSeen(pct) {
+  safeSet('lastMilestone', pct);
+}

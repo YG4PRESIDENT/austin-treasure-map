@@ -130,9 +130,26 @@
   border-top-color: var(--gold) !important;
 }
 
-/* --- Neighborhood Overlay --- */
+/* --- Neighborhood Overlay (soft colored fills) --- */
 .neighborhood-polygon {
-  transition: fill-opacity 0.2s;
+  transition: fill-opacity 0.3s, stroke-opacity 0.3s;
+}
+
+.neighborhood-polygon:hover {
+  fill-opacity: 0.18 !important;
+}
+
+/* Mastered neighborhood: gold fill + border */
+.neighborhood-mastered {
+  fill: #c4883c !important;
+  fill-opacity: 0.25 !important;
+  stroke: #c4883c !important;
+  stroke-width: 2 !important;
+  stroke-opacity: 1 !important;
+}
+
+.neighborhood-mastered:hover {
+  fill-opacity: 0.3 !important;
 }
 
 .neighborhood-label {
@@ -153,6 +170,17 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+/* Mastery badge on label */
+.neighborhood-label .mastery-badge {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
 }
 
 .neighborhood-tooltip {

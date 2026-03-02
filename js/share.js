@@ -11,17 +11,20 @@ export function initShareMode() {
 
   document.body.classList.add('share-mode');
 
-  // Update header
-  const title = document.getElementById('app-title');
-  if (title) title.textContent = 'AUSTIN TREASURE MAP — A Curated Guide';
+  // Update title
+  const title = document.querySelector('.nav-sidebar__title');
+  if (title) title.innerHTML = '☠ AUSTIN<br>TREASURE MAP<br><small style="font-size:0.6em;opacity:0.7;">A Curated Guide</small>';
 
   // Hide personal elements
   const hideIds = [
-    'progress-bar',
-    'sidebar-visited-btn',
-    'sidebar-notes-section',
+    'progress-section',
+    'quest-container',
+    'detail-visited-btn',
+    'detail-notes-section',
     'export-btn',
     'import-btn',
+    'mobile-export-btn',
+    'mobile-import-btn',
   ];
   hideIds.forEach(id => {
     const el = document.getElementById(id);
@@ -41,13 +44,19 @@ export function initShareMode() {
 }
 
 export function initShareButton() {
-  const btn = document.getElementById('share-btn');
+  // Desktop share button
+  setupShareBtn('share-btn');
+  // Mobile share button
+  setupShareBtn('mobile-share-btn');
+}
+
+function setupShareBtn(btnId) {
+  const btn = document.getElementById(btnId);
   if (!btn) return;
 
   btn.addEventListener('click', async () => {
     const shareUrl = `${window.location.origin}${window.location.pathname}?share=true`;
 
-    // Try native Web Share API first (mobile)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -57,16 +66,14 @@ export function initShareButton() {
         });
         return;
       } catch {
-        // User cancelled or API failed — fall through to clipboard
+        // User cancelled or API failed — fall through
       }
     }
 
-    // Fallback: copy to clipboard
     try {
       await navigator.clipboard.writeText(shareUrl);
       showToast('Share link copied to clipboard!');
     } catch {
-      // Final fallback
       prompt('Copy this share link:', shareUrl);
     }
   });
