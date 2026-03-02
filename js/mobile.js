@@ -6,7 +6,6 @@ import { getMap } from './map.js';
 
 const TABS = [
   { id: 'map',     icon: '🗺',  label: 'Map' },
-  { id: 'search',  icon: '🔍', label: 'Search' },
   { id: 'quests',  icon: '⚔',  label: 'Quests' },
   { id: 'profile', icon: '👤', label: 'Profile' },
 ];
@@ -30,6 +29,11 @@ export function initMobileTabs() {
     const btn = e.target.closest('.mobile-tab');
     if (!btn) return;
     switchTab(btn.dataset.tab);
+  });
+
+  // Wire up panel close buttons (X → back to map)
+  document.querySelectorAll('.mobile-panel__close').forEach(btn => {
+    btn.addEventListener('click', () => switchTab('map'));
   });
 }
 

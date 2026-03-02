@@ -93,6 +93,15 @@
         <div id="filter-bar" class="map-top-bar__row"></div>
       </div>
 
+      <!-- Mobile floating search (visible only on mobile Map view) -->
+      <div class="mobile-map-search">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="mobile-search-input" placeholder="Search treasures…" autocomplete="off">
+        </div>
+        <div id="mobile-search-results" class="mobile-search-results"></div>
+      </div>
+
       <!-- Mobile category chips (visible only on mobile Map tab) -->
       <div id="mobile-filter-chips" class="mobile-filter-chips"></div>
     </main>
@@ -123,22 +132,10 @@
 
     <!-- ─── Mobile Tab Panels (hidden on desktop) ─── -->
     <div id="mobile-panels" class="mobile-panels">
-      <div class="mobile-panel" data-panel="search">
-        <div class="mobile-panel__header">
-          <h2>Search Treasures</h2>
-        </div>
-        <div class="mobile-panel__body">
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="mobile-search-input" placeholder="Search treasures…" autocomplete="off">
-          </div>
-          <div id="mobile-search-results" class="mobile-search-results"></div>
-        </div>
-      </div>
-
       <div class="mobile-panel" data-panel="quests">
         <div class="mobile-panel__header">
           <h2>Quests & Mastery</h2>
+          <button class="mobile-panel__close" data-close="map">✕</button>
         </div>
         <div class="mobile-panel__body">
           <div id="mobile-quest-container"></div>
@@ -149,6 +146,7 @@
       <div class="mobile-panel" data-panel="profile">
         <div class="mobile-panel__header">
           <h2>Your Journey</h2>
+          <button class="mobile-panel__close" data-close="map">✕</button>
         </div>
         <div class="mobile-panel__body">
           <div id="mobile-progress-section" class="mobile-progress-section"></div>
