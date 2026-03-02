@@ -106,8 +106,8 @@ export function initMap() {
   // Zoom control on top-right
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  // Layer control
-  const layerControl = L.control.layers(baseLayers, overlays, {
+  // Layer control (stored on map for later overlay additions)
+  map._layerControl = L.control.layers(baseLayers, overlays, {
     position: 'topright',
     collapsed: true,
   }).addTo(map);

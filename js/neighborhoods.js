@@ -126,15 +126,20 @@ export function initNeighborhoods(map) {
     labelsLayer.addLayer(label);
   });
 
-  // Show/hide labels based on zoom
-  map.on('zoomend', () => {
+  // Show/hide labels based on zoom AND whether neighborhoods are visible
+  function updateLabels() {
     const zoom = map.getZoom();
-    if (zoom >= 13 && !map.hasLayer(labelsLayer)) {
+    const hoodsVisible = map.hasLayer(neighborhoodLayer);
+    if (hoodsVisible && zoom >= 13 && !map.hasLayer(labelsLayer)) {
       labelsLayer.addTo(map);
-    } else if (zoom < 13 && map.hasLayer(labelsLayer)) {
+    } else if ((!hoodsVisible || zoom < 13) && map.hasLayer(labelsLayer)) {
       map.removeLayer(labelsLayer);
     }
-  });
+  }
+
+  map.on('zoomend', updateLabels);
+  map.on('overlayadd', (e) => { if (e.layer === neighborhoodLayer) updateLabels(); });
+  map.on('overlayremove', (e) => { if (e.layer === neighborhoodLayer) updateLabels(); });
 
   return { neighborhoodLayer, labelsLayer };
 }

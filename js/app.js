@@ -19,10 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Initialize map
   const map = initMap();
 
-  // 3. Neighborhoods
+  // 3. Neighborhoods — add to map and register in layer control
   const { neighborhoodLayer } = initNeighborhoods(map);
-  // Add as toggleable overlay — default ON
   neighborhoodLayer.addTo(map);
+  if (map._layerControl) {
+    map._layerControl.addOverlay(neighborhoodLayer, '🏘️ Neighborhoods');
+  }
 
   // 4. Sidebar (with callback to refresh list view on visited change)
   initSidebar({ onVisitedChange: () => renderListView() });
