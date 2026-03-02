@@ -169,10 +169,24 @@
   <!-- App JS (ES Modules) -->
   <script type="module" src="js/app.js"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Registration (with force update) -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        // Force check for updates on every page load
+        reg.update();
+        // When a new SW is installed, reload to pick up new assets
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          if (newSW) {
+            newSW.addEventListener('statechange', () => {
+              if (newSW.state === 'activated' && navigator.serviceWorker.controller) {
+                window.location.reload();
+              }
+            });
+          }
+        });
+      }).catch(() => {});
     }
   </script>
 </body>
