@@ -208,13 +208,11 @@ export function initNeighborhoods(map) {
     const places = getPlacesInNeighborhood(hood.name);
     const mastery = getMastery(hood.name);
 
-    // Polygon with soft colored fill
+    // Polygon with foggy soft fill (no stroke, very low opacity)
     const polygon = L.polygon(hood.bounds, {
-      color: mastery.mastered ? '#c4883c' : hood.color,
-      weight: mastery.mastered ? 2 : 1,
-      opacity: mastery.mastered ? 0.8 : 0.3,
+      stroke: false,
       fillColor: mastery.mastered ? '#c4883c' : hood.color,
-      fillOpacity: mastery.mastered ? 0.25 : hood.opacity,
+      fillOpacity: mastery.mastered ? 0.12 : 0.06,
       className: `neighborhood-polygon${mastery.mastered ? ' neighborhood-mastered' : ''}`,
     });
 
@@ -225,12 +223,12 @@ export function initNeighborhoods(map) {
 
     polygon.on('mouseover', function () {
       if (!mastery.mastered) {
-        this.setStyle({ fillOpacity: hood.opacity + 0.10, weight: 2 });
+        this.setStyle({ fillOpacity: 0.12 });
       }
     });
     polygon.on('mouseout', function () {
       if (!mastery.mastered) {
-        this.setStyle({ fillOpacity: hood.opacity, weight: 1 });
+        this.setStyle({ fillOpacity: 0.06 });
       }
     });
 
@@ -283,11 +281,9 @@ export function refreshNeighborhoodMastery() {
     const mastery = getMastery(hood.name);
 
     polygon.setStyle({
-      color: mastery.mastered ? '#c4883c' : hood.color,
-      weight: mastery.mastered ? 2 : 1,
-      opacity: mastery.mastered ? 0.8 : 0.3,
+      stroke: false,
       fillColor: mastery.mastered ? '#c4883c' : hood.color,
-      fillOpacity: mastery.mastered ? 0.25 : hood.opacity,
+      fillOpacity: mastery.mastered ? 0.12 : 0.06,
     });
 
     polygon.setTooltipContent(

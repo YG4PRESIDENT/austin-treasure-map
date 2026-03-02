@@ -130,26 +130,15 @@
   border-top-color: var(--gold) !important;
 }
 
-/* --- Neighborhood Overlay (soft colored fills) --- */
+/* --- Neighborhood Overlay (soft foggy fills) --- */
 .neighborhood-polygon {
-  transition: fill-opacity 0.3s, stroke-opacity 0.3s;
+  filter: blur(12px);
+  transition: fill-opacity 0.4s ease;
 }
 
-.neighborhood-polygon:hover {
-  fill-opacity: 0.18 !important;
-}
-
-/* Mastered neighborhood: gold fill + border */
+/* Mastered neighborhood: slightly brighter glow */
 .neighborhood-mastered {
-  fill: #c4883c !important;
-  fill-opacity: 0.25 !important;
-  stroke: #c4883c !important;
-  stroke-width: 2 !important;
-  stroke-opacity: 1 !important;
-}
-
-.neighborhood-mastered:hover {
-  fill-opacity: 0.3 !important;
+  filter: blur(14px);
 }
 
 .neighborhood-label {

@@ -843,22 +843,24 @@ body.dark-mode .mastery-item__name {
 
 .map-top-bar__row {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
+  gap: 4px;
   align-items: center;
 }
 
-/* Category chips inside top bar — compact pill style */
-.map-top-bar__row .group-btn {
-  flex: 0 0 auto;
-  min-width: auto;
-  padding: 5px 10px;
-  font-size: 0.7rem;
-  border-radius: 20px;
+/* All buttons in top bar stretch equally */
+.map-top-bar__row > .style-picker__btn,
+.map-top-bar__row > .group-btn {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 0.72rem;
+  border-radius: 8px;
 }
 
+/* Override the "All" button full-width rule inside top bar */
 .map-top-bar__row .group-btn--all {
-  flex: 0 0 auto;
+  flex: 1;
 }
 
 .map-top-bar__row .group-btn__icon {
