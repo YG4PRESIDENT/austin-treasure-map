@@ -17,7 +17,7 @@ export function initShareMode() {
 
   // Hide personal elements
   const hideIds = [
-    'progress-section',
+    'gamification',
     'quest-container',
     'detail-visited-btn',
     'detail-notes-section',

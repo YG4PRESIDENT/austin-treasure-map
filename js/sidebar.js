@@ -34,7 +34,6 @@ export function initSidebar(opts = {}) {
     const nowVisited = toggleVisited(currentPlace.id);
     refreshMarkerIcon(currentPlace.id);
     updateVisitedUI(nowVisited);
-    updateProgressRing();
     if (nowVisited) {
       playDiscoveredAnimation();
       checkMilestone();
@@ -121,46 +120,6 @@ function showSaveIndicator() {
   setTimeout(() => { label.textContent = 'Personal Notes'; }, 1500);
 }
 
-// ─── Progress Ring ─────────────────────────────
-const CIRCUMFERENCE = 2 * Math.PI * 52; // r=52 → ~326.73
-
-export function updateProgressRing() {
-  const total = PLACES.filter(p => p.lat && p.lng).length;
-  const count = getVisitedCount();
-  const pct = total > 0 ? count / total : 0;
-
-  // Desktop ring
-  const fillEl = el('progress-ring-fill');
-  if (fillEl) {
-    const offset = CIRCUMFERENCE * (1 - pct);
-    fillEl.style.strokeDashoffset = offset;
-  }
-
-  // Count label
-  const countEl = el('progress-count');
-  if (countEl) countEl.textContent = count;
-
-  const totalEl = document.querySelector('.progress-ring__total');
-  if (totalEl) totalEl.textContent = `/ ${total}`;
-
-  // Mobile progress (clone ring into mobile panel if needed)
-  const mobileSection = el('mobile-progress-section');
-  if (mobileSection) {
-    mobileSection.innerHTML = `
-      <svg class="progress-ring" viewBox="0 0 120 120" style="width:130px;height:130px;transform:rotate(-90deg);">
-        <circle class="progress-ring__track" cx="60" cy="60" r="52" />
-        <circle class="progress-ring__fill" cx="60" cy="60" r="52"
-          style="stroke-dasharray:${CIRCUMFERENCE};stroke-dashoffset:${CIRCUMFERENCE * (1 - pct)}" />
-      </svg>
-      <div style="text-align:center;margin-top:12px;">
-        <span style="font-family:var(--font-display);font-size:2rem;color:var(--gold-dark);">${count}</span>
-        <span style="font-family:var(--font-ui);font-size:0.8rem;color:var(--brown-light);"> / ${total}</span>
-        <div style="font-family:var(--font-ui);font-size:0.7rem;color:var(--brown-light);text-transform:uppercase;letter-spacing:1px;margin-top:4px;">discovered</div>
-      </div>
-    `;
-  }
-}
-
 // Milestone celebrations
 const MILESTONES = [25, 50, 75, 100];
 
@@ -174,15 +133,6 @@ function checkMilestone() {
     if (pct >= m && lastSeen < m) {
       setLastMilestoneSeen(m);
       showMilestoneToast(m);
-
-      // Pulse the ring
-      const ringSection = el('progress-section');
-      if (ringSection) {
-        ringSection.querySelector('.progress-ring')?.classList.add('progress-ring--milestone');
-        setTimeout(() => {
-          ringSection.querySelector('.progress-ring')?.classList.remove('progress-ring--milestone');
-        }, 1000);
-      }
       break;
     }
   }

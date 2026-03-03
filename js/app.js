@@ -3,7 +3,8 @@
 // ============================================================
 
 import { initMap, addMarkers, flyToPlace, switchBaseLayer, getCurrentBaseLayerName } from './map.js';
-import { initSidebar, openSidebar, updateProgressRing } from './sidebar.js';
+import { initSidebar, openSidebar } from './sidebar.js';
+import { renderGamification, refreshGamification } from './gamification.js';
 import { initNeighborhoods, refreshNeighborhoodMastery, getAllMasteryData } from './neighborhoods.js';
 import { initFilters } from './filters.js';
 import { isShareMode, initShareMode, initShareButton } from './share.js';
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Sidebar (with callback for visited changes)
     initSidebar({
       onVisitedChange: () => {
-        updateProgressRing();
+        refreshGamification();
         refreshNeighborhoodMastery();
         renderMasteryList();
         // Refresh quest card (in case visited place was the quest target)
@@ -111,8 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Filters (5 groups + search)
     initFilters();
 
-    // 7. Progress ring
-    updateProgressRing();
+    // 7. Gamification (XP bar, rank, treasure chest)
+    renderGamification('gamification');
+    renderGamification('mobile-gamification');
 
     // 8. Quest system
     const questContainer = document.getElementById('quest-container');
