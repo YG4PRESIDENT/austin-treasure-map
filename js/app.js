@@ -8,7 +8,7 @@ import { renderGamification, refreshGamification } from './gamification.js';
 import { initNeighborhoods, refreshNeighborhoodMastery, getAllMasteryData } from './neighborhoods.js';
 import { initFilters } from './filters.js';
 import { isShareMode, initShareMode, initShareButton } from './share.js';
-import { exportData, importData } from './state.js';
+import { initAddPlace } from './places.js';
 import { renderQuestCard, refreshQuest } from './quests.js';
 import { initMobileTabs } from './mobile.js';
 
@@ -19,27 +19,6 @@ function hideLoader() {
     loader.classList.add('loaded');
     setTimeout(() => loader.remove(), 600);
   }
-}
-
-// --- Export/Import handler setup ---
-function setupExportImport(exportBtnId, importBtnId) {
-  document.getElementById(exportBtnId)?.addEventListener('click', exportData);
-  document.getElementById(importBtnId)?.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        await importData(file);
-        window.location.reload();
-      } catch (err) {
-        alert('Import failed: ' + err.message);
-      }
-    };
-    input.click();
-  });
 }
 
 // --- Render mastery list for mobile Quests tab ---
@@ -135,9 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 11. Share button
     initShareButton();
 
-    // 12. Export / Import (desktop + mobile)
-    setupExportImport('export-btn', 'import-btn');
-    setupExportImport('mobile-export-btn', 'mobile-import-btn');
+    // 12. Add Place system
+    initAddPlace();
 
     // 13. Hide loading screen
     setTimeout(hideLoader, 800);

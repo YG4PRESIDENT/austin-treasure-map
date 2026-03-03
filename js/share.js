@@ -21,10 +21,8 @@ export function initShareMode() {
     'quest-container',
     'detail-visited-btn',
     'detail-notes-section',
-    'export-btn',
-    'import-btn',
-    'mobile-export-btn',
-    'mobile-import-btn',
+    'add-place-btn',
+    'mobile-add-place-btn',
   ];
   hideIds.forEach(id => {
     const el = document.getElementById(id);

@@ -56,35 +56,74 @@ export function getRank(xp) {
   };
 }
 
+// ─── ASCII Chest Art ─────────────────────────────────
+
+function getChestArt(rankNum) {
+  if (rankNum <= 3) {
+    // Closed / locked chest
+    return [
+      '    ╔══════════╗    ',
+      '    ║ ┌──────┐ ║    ',
+      '    ╠══════════╣    ',
+      '    ║   ◈  ▼   ║    ',
+      '    ║          ║    ',
+      '    ╚══════════╝    ',
+    ].join('\n');
+  }
+  if (rankNum <= 5) {
+    // Half-open, sparkles visible
+    return [
+      '      ╔════════╗      ',
+      '     ╔╝ ✦  · ✧ ╚╗    ',
+      '    ╔╝  ✧ ·  ✦   ╚╗  ',
+      '    ╠══════════════╣  ',
+      '    ║  ✦  ·  ✧  ✦ ║  ',
+      '    ╚══════════════╝  ',
+    ].join('\n');
+  }
+  // Ranks 6–8: fully open, gold overflowing
+  return [
+    '     ╔══════════╗      ',
+    '    ╔╝ ✦ ◉ ✧ ● ╚╗    ',
+    '   ╔╝ ◉ ✦ ● ✧ ◉  ╚╗  ',
+    '   ╠════════════════╣  ',
+    '   ║ ◉ ✦ ● ✧ ◉ ✦ ● ║  ',
+    '   ║  ● ◉ ✦ ● ◉ ✧  ║  ',
+    '   ╚════════════════╝  ',
+  ].join('\n');
+}
+
+function getChestHTML(rankNum) {
+  return `<pre class="ascii-chest">${getChestArt(rankNum)}</pre>`;
+}
+
 // ─── HTML Builder ────────────────────────────────────
 
 function buildHTML(xp, rank, count) {
-  const pct = MAX_XP > 0 ? (xp / MAX_XP) * 100 : 0;
-  const isComplete = count >= TOTAL_PLACES;
-  const xpFmt = xp.toLocaleString();
-  const maxFmt = MAX_XP.toLocaleString();
+  // Level-based XP: progress within current rank
+  const levelXp = xp - rank.xpMin;
+  const levelMax = rank.xpNext ? rank.xpNext - rank.xpMin : 0;
+  const isMaxRank = !rank.xpNext;
+  const pct = isMaxRank ? 100 : (levelMax > 0 ? (levelXp / levelMax) * 100 : 0);
+
+  const nextRank = isMaxRank ? null : RANKS.find(r => r.xpMin === rank.xpNext);
 
   return `
-    <div class="treasure-chest ${isComplete ? 'chest--open' : ''}">
-      <div class="chest__glow"></div>
-      <div class="chest__body">
-        <div class="chest__lid"></div>
-        <div class="chest__keyhole"></div>
-      </div>
-    </div>
+    ${getChestHTML(rank.rank)}
     <div class="xp-bar">
       <div class="xp-bar__fill" style="width:${pct}%">
         <div class="xp-bar__shimmer"></div>
       </div>
-      <span class="xp-bar__label">${xpFmt} / ${maxFmt} XP</span>
+      <span class="xp-bar__label">${isMaxRank ? 'MAX RANK' : `${levelXp.toLocaleString()} / ${levelMax.toLocaleString()} XP`}</span>
     </div>
     <div class="rank-display">
-      <div class="rank-display__title">${rank.icon} ${rank.title}</div>
-      ${rank.nextTitle
-        ? `<div class="rank-display__next">Next: ${rank.nextTitle} &mdash; ${rank.xpToNext.toLocaleString()} XP to go</div>`
+      <div class="rank-display__title">Level ${rank.rank} ${rank.icon} ${rank.title}</div>
+      ${nextRank
+        ? `<div class="rank-display__next">Next: Level ${nextRank.rank} ${nextRank.title} &mdash; ${rank.xpToNext.toLocaleString()} XP to go</div>`
         : `<div class="rank-display__next">All ranks achieved!</div>`
       }
     </div>
+    <div class="xp-explanation">Visit places to earn XP · 25 per spot · 50 for day trips</div>
     <div class="discovery-count">${count} / ${TOTAL_PLACES} treasures found</div>
   `;
 }
@@ -105,8 +144,14 @@ export function refreshGamification() {
   const xp = computeXP();
   const rank = getRank(xp);
   const count = getVisitedCount();
-  const pct = MAX_XP > 0 ? (xp / MAX_XP) * 100 : 0;
-  const isComplete = count >= TOTAL_PLACES;
+
+  // Level-based XP calculations
+  const levelXp = xp - rank.xpMin;
+  const levelMax = rank.xpNext ? rank.xpNext - rank.xpMin : 0;
+  const isMaxRank = !rank.xpNext;
+  const pct = isMaxRank ? 100 : (levelMax > 0 ? (levelXp / levelMax) * 100 : 0);
+
+  const nextRank = isMaxRank ? null : RANKS.find(r => r.xpMin === rank.xpNext);
 
   // XP bar fill (animated via CSS transition)
   document.querySelectorAll('.xp-bar__fill').forEach(fill => {
@@ -115,18 +160,20 @@ export function refreshGamification() {
 
   // XP label
   document.querySelectorAll('.xp-bar__label').forEach(label => {
-    label.textContent = `${xp.toLocaleString()} / ${MAX_XP.toLocaleString()} XP`;
+    label.textContent = isMaxRank
+      ? 'MAX RANK'
+      : `${levelXp.toLocaleString()} / ${levelMax.toLocaleString()} XP`;
   });
 
   // Rank title
   document.querySelectorAll('.rank-display__title').forEach(el => {
-    el.textContent = `${rank.icon} ${rank.title}`;
+    el.textContent = `Level ${rank.rank} ${rank.icon} ${rank.title}`;
   });
 
   // Rank next
   document.querySelectorAll('.rank-display__next').forEach(el => {
-    el.textContent = rank.nextTitle
-      ? `Next: ${rank.nextTitle} \u2014 ${rank.xpToNext.toLocaleString()} XP to go`
+    el.textContent = nextRank
+      ? `Next: Level ${nextRank.rank} ${nextRank.title} \u2014 ${rank.xpToNext.toLocaleString()} XP to go`
       : 'All ranks achieved!';
   });
 
@@ -135,8 +182,8 @@ export function refreshGamification() {
     el.textContent = `${count} / ${TOTAL_PLACES} treasures found`;
   });
 
-  // Treasure chest open/close
-  document.querySelectorAll('.treasure-chest').forEach(chest => {
-    chest.classList.toggle('chest--open', isComplete);
+  // ASCII chest update
+  document.querySelectorAll('.ascii-chest').forEach(chest => {
+    chest.textContent = getChestArt(rank.rank);
   });
 }

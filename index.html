@@ -60,8 +60,10 @@
         <!-- Footer Actions -->
         <div class="nav-sidebar__footer">
           <button class="nav-btn" id="share-btn">📤 Share</button>
-          <button class="nav-btn" id="export-btn">💾 Export</button>
-          <button class="nav-btn" id="import-btn">📂 Import</button>
+          <button class="nav-btn nav-btn--add" id="add-place-btn">
+            ➕ Add Place
+            <span class="pending-badge" id="pending-badge" style="display:none;">0</span>
+          </button>
         </div>
 
       </div>
@@ -73,6 +75,7 @@
 
       <!-- Map Top Bar: style picker + category filters (desktop) -->
       <div class="map-top-bar">
+        <span class="map-top-bar__label">MAP STYLE</span>
         <div class="map-top-bar__row">
           <button class="style-picker__btn" data-layer="🗺️ Treasure Map">🗺️ Map</button>
           <button class="style-picker__btn" data-layer="⛰️ Explorer Map">⛰️ Topo</button>
@@ -80,6 +83,7 @@
           <button class="style-picker__btn" data-layer="🌙 Dark Mode">🌙 Dark</button>
           <button class="style-picker__btn" data-layer="🛰️ Satellite">🛰️ Sat</button>
         </div>
+        <span class="map-top-bar__label">FILTER BY</span>
         <div id="filter-bar" class="map-top-bar__row"></div>
       </div>
 
@@ -153,8 +157,10 @@
           </div>
           <div class="mobile-profile-actions">
             <button class="nav-btn" id="mobile-share-btn">📤 Share</button>
-            <button class="nav-btn" id="mobile-export-btn">💾 Export</button>
-            <button class="nav-btn" id="mobile-import-btn">📂 Import</button>
+            <button class="nav-btn nav-btn--add" id="mobile-add-place-btn">
+              ➕ Add Place
+              <span class="pending-badge" id="mobile-pending-badge" style="display:none;">0</span>
+            </button>
           </div>
         </div>
       </div>
